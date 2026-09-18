@@ -45,6 +45,7 @@ Every stage — hand tracking, normalization, sequence buffering, and classifica
 
 ## File Structure
 
+```
 asl-translator/
 ├── app.py
 ├── requirements.txt
@@ -53,21 +54,21 @@ asl-translator/
 ├── preprocess_videos.py
 ├── train_word_classifier.py
 ├── models/
-│ ├── hand_landmarker.task
-│ ├── word_classifier.h5
-│ └── word_classes.json
+│   ├── hand_landmarker.task
+│   ├── word_classifier.h5
+│   └── word_classes.json
 ├── src/
-│ ├── hand_tracker.py # Hand-landmark detection
-│ ├── draw_utils.py # Skeleton visualization
-│ ├── landmark_utils.py # Normalization pipeline
-│ ├── dataset_collector.py # Training data collection tooling
-│ └── word_classifier.py # LSTM inference wrapper
+│   ├── hand_tracker.py         # Hand-landmark detection
+│   ├── draw_utils.py           # Skeleton visualization
+│   ├── landmark_utils.py       # Normalization pipeline
+│   ├── dataset_collector.py    # Training data collection tooling
+│   └── word_classifier.py      # LSTM inference wrapper
 ├── data/
 ├── raw_dataset/
 └── tests/
-├── test_hand_tracker.py
-└── test_word_translator.py
-
+    ├── test_hand_tracker.py
+    └── test_word_translator.py
+```
 
 ## Setup
 
