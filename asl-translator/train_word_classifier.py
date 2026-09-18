@@ -4,7 +4,7 @@ from sklearn.preprocessing import LabelEncoder
 from tensorflow import keras
 
 data = np.load('data/word_sequences.npz', allow_pickle=True)
-sequences = data['sequences']  # shape: (498, 40, 63)
+sequences = data['sequences']
 labels = data['labels']
 
 le = LabelEncoder()
@@ -28,11 +28,20 @@ model = keras.Sequential([
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 model.summary()
 
+callbacks = [
+    keras.callbacks.EarlyStopping(
+        monitor='val_loss',
+        patience=10,
+        restore_best_weights=True
+    )
+]
+
 history = model.fit(
     X_train, y_train,
     epochs=60,
     batch_size=16,
-    validation_data=(X_test, y_test)
+    validation_data=(X_test, y_test),
+    callbacks=callbacks
 )
 
 model.save('models/word_classifier.h5')
@@ -41,4 +50,4 @@ import json
 with open('models/word_classes.json', 'w') as f:
     json.dump(le.classes_.tolist(), f)
 
-print(f"\nFinal validation accuracy: {history.history['val_accuracy'][-1]:.2%}")
+print(f"\nBest validation accuracy: {max(history.history['val_accuracy']):.2%}")

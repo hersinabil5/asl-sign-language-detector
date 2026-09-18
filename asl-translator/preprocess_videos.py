@@ -3,20 +3,19 @@ import json
 import os
 import numpy as np
 from src.hand_tracker import HandTracker
+from src.landmark_utils import normalize_landmarks
 
+# Top 20 words by available video count (from explore_dataset.py)
 WORD_LIST = [
     'before', 'cool', 'thin', 'drink', 'go', 'who', 'help', 'cousin', 'computer', 'tall',
-    'bed', 'thanksgiving', 'candy', 'short', 'accident', 'bowling', 'shirt', 'man', 'yes', 'basketball',
-    'dark', 'what', 'last', 'pizza', 'corn', 'change', 'later', 'play', 'dog', 'apple',
-    'no', 'mother', 'deaf', 'woman', 'family', 'thursday', 'letter', 'walk', 'orange', 'many'
+    'bed', 'thanksgiving', 'candy', 'short', 'accident', 'bowling', 'shirt', 'man', 'yes', 'basketball'
 ]
 
-MAX_FRAMES = 40  # cap sequence length; shorter videos get padded, longer ones truncated
+MAX_FRAMES = 40
 
 with open('raw_dataset/WLASL_v0.3.json', 'r') as f:
     wlasl_data = json.load(f)
 
-# Build word -> list of video_ids
 word_to_videos = {}
 for entry in wlasl_data:
     if entry['gloss'] in WORD_LIST:
@@ -45,10 +44,10 @@ for word in WORD_LIST:
                 break
             hands = tracker.detect(frame)
             if hands:
-                # Flatten first detected hand's 21 landmarks into 63 numbers
                 flat = [coord for point in hands[0] for coord in point]
+                flat = normalize_landmarks(flat)
             else:
-                flat = [0.0] * 63  # no hand detected this frame
+                flat = [0.0] * 63
             frame_landmarks.append(flat)
 
         cap.release()
@@ -56,7 +55,6 @@ for word in WORD_LIST:
         if len(frame_landmarks) == 0:
             continue
 
-        # Pad or truncate to MAX_FRAMES
         if len(frame_landmarks) > MAX_FRAMES:
             frame_landmarks = frame_landmarks[:MAX_FRAMES]
         else:
@@ -69,7 +67,7 @@ for word in WORD_LIST:
 
     print(f"'{word}': processed {processed_count} videos")
 
-sequences = np.array(sequences)  # shape: (num_samples, MAX_FRAMES, 63)
+sequences = np.array(sequences)
 labels = np.array(labels)
 
 os.makedirs('data', exist_ok=True)

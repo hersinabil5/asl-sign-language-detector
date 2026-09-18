@@ -8,7 +8,7 @@ class HandTracker:
     """Wraps MediaPipe's hand landmark detection. Knows nothing about
     ASL, classification, or Flask — just turns a frame into landmarks."""
 
-    def __init__(self, model_path='models/hand_landmarker.task', num_hands=2, min_confidence=0.7):
+    def __init__(self, model_path='models/hand_landmarker.task', num_hands=2, min_confidence=0.5):
         base_options = python.BaseOptions(
             model_asset_path=model_path,
             delegate=python.BaseOptions.Delegate.CPU
